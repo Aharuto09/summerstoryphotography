@@ -3,6 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
+import 'package:ta_summerstory/homepage.dart';
+import 'package:ta_summerstory/loginPage.dart';
+import 'package:ta_summerstory/start.dart';
 
 class SignupPage extends StatefulWidget {
   SignupPage({Key? key}) : super(key: key);
@@ -23,23 +26,40 @@ class _SignupPageState extends State<SignupPage> {
     Future<void> createUser() async {
       late DatabaseReference ref = FirebaseDatabase.instance.ref("User");
       // Call the Users's CollectionReference to add a new user
+      final passU = await ref.child(username.text).get();
+      if (passU.exists) {
+        dialogalert(context, "Username Not Valid or Already Exist");
+      } else {
+        return ref.child(username.text).set({
+          "OrderHistory": "",
+          "email": email.text,
+          "firstname": firstname.text,
+          "lastname": lastname.text,
+          "pass": pass.text,
+          "telp": telp.text,
+          "status": false,
+          "date": DateTime.now().toString()
+        }).then((value) {
+          print("User Added");
 
-      return ref.child(username.text).set({
-        "email": email.text,
-        "firtsname": firstname.text,
-        "lastname": lastname.text,
-        "pass": pass.text,
-        "telp": telp.text,
-        "date": DateTime.now().toString()
-      }).then((value) {
-        print("User Added");
-        username.clear();
-        email.clear();
-        pass.clear();
-        telp.clear();
-        firstname.clear();
-        lastname.clear();
-      }).catchError((error) => print("something error"));
+          email.clear();
+          pass.clear();
+          telp.clear();
+          firstname.clear();
+          lastname.clear();
+        }).catchError((error) => print("something error"));
+      }
+    }
+
+    Future<void> loggedin() async {
+      late DatabaseReference refUser =
+          FirebaseDatabase.instance.ref().child("User");
+      final userSnapshot = await refUser.child(username.text).get();
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => startPage(userSnapshot: userSnapshot)));
+      username.clear();
     }
 
     return Scaffold(
@@ -75,7 +95,7 @@ class _SignupPageState extends State<SignupPage> {
                       decoration: InputDecoration(hintText: "First Name"),
                     ),
                   ),
-                  SizedBox(width: 6),
+                  SizedBox(width: 10),
                   Expanded(
                     child: TextField(
                       controller: lastname,
@@ -88,35 +108,38 @@ class _SignupPageState extends State<SignupPage> {
                 controller: username,
                 decoration: InputDecoration(
                     icon: Icon(
-                      FontAwesome.mail,
+                      FontAwesome5.user,
                       size: 16,
                     ),
                     hintText: "Username"),
               ),
               TextField(
                 controller: email,
+                keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                     icon: Icon(
-                      FontAwesome.mail,
+                      FontAwesome.mail_alt,
                       size: 16,
                     ),
                     hintText: "Email"),
               ),
               TextField(
                 controller: telp,
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                     icon: Icon(
                       FontAwesome.phone,
-                      size: 16,
+                      size: 20,
                     ),
                     hintText: "No Hp"),
               ),
               TextField(
                 controller: pass,
+                obscureText: true,
                 decoration: InputDecoration(
                     icon: Icon(
                       FontAwesome.lock,
-                      size: 16,
+                      size: 20,
                     ),
                     hintText: "Password"),
               ),
@@ -129,9 +152,25 @@ class _SignupPageState extends State<SignupPage> {
                       telp.text.isEmpty ||
                       firstname.text.isEmpty ||
                       lastname.text.isEmpty) {
-                    print("Textfield in Empty");
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        backgroundColor: Colors.red,
+                        // margin: EdgeInsets.all(5),
+                        padding: EdgeInsets.all(10),
+                        content: Container(
+                          width: double.infinity,
+                          height: 35,
+                          child: Center(
+                            child: Text(
+                              "Please make sure all fields are filled in correctly",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        )));
                   } else {
-                    createUser().then((value) => Navigator.pop(context));
+                    createUser().then((value) {
+                      Navigator.pop(context);
+                      loggedin();
+                    });
                   }
                 },
                 style: ElevatedButton.styleFrom(

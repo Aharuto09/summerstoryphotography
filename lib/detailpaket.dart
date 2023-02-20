@@ -1,7 +1,11 @@
+import 'dart:math';
+
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttericon/font_awesome_icons.dart';
+import 'package:ta_summerstory/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class detailpaket extends StatefulWidget {
@@ -13,9 +17,155 @@ class detailpaket extends StatefulWidget {
 class detailpaketstate extends State<detailpaket> {
   int phone = 6281932216775;
 
+  @override
   Widget build(BuildContext context) {
     double lebar = MediaQuery.of(context).size.width;
     double tinggi = MediaQuery.of(context).size.height;
+    late DatabaseReference ref = FirebaseDatabase.instance.ref("Order");
+
+    Future<void> addOrder(String judul) async {
+      int _randomKey = Random().nextInt(1000);
+      String dateOrder = DateTime.now().toString().substring(0, 10);
+      final cekOrder = await ref.child(dateOrder).get();
+      if (cekOrder.exists) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.red,
+            // margin: EdgeInsets.all(5),
+            padding: EdgeInsets.all(10),
+            content: Container(
+              width: double.infinity,
+              height: 35,
+              child: Center(
+                child: Text(
+                  "You have ordered today, Please order in another day",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            )));
+      } else {
+        ref.child(_randomKey.toString()).set({
+          "By": Userlogged,
+          "Date": dateOrder,
+          "Judul": judul,
+          "Status": "in process"
+        }).then((value) {
+          print("Order Added");
+        });
+      }
+    }
+
+    void orderNow() {
+      showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: Container(
+                height: 450,
+                child: Flex(
+                  direction: Axis.vertical,
+                  children: [
+                    Divider(
+                      color: Colors.black45,
+                      height: 5,
+                      thickness: 1,
+                    ),
+                    Divider(
+                      color: Colors.black45,
+                      height: 5,
+                      thickness: 1,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Text(
+                        widget.item["Judul"],
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Divider(
+                      color: Colors.black45,
+                      height: 5,
+                      thickness: 1,
+                    ),
+                    Divider(
+                      color: Colors.black45,
+                      height: 5,
+                      thickness: 1,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Text(widget.item["day"] +
+                          "\n" +
+                          (widget.item["detail"])
+                              .toString()
+                              .replaceAll("\\n", "\n")),
+                    ),
+                    Divider(
+                      color: Colors.black45,
+                      height: 20,
+                      thickness: 1,
+                    ),
+                    Row(
+                      children: [
+                        Text("By : "),
+                        Spacer(),
+                        Text(widget.item["by"]),
+                      ],
+                    ),
+                    Divider(
+                      color: Colors.black45,
+                      height: 20,
+                      thickness: 1,
+                    ),
+                    Row(
+                      children: [
+                        Text("Harga :  Rp. "),
+                        Spacer(),
+                        Text(
+                          (widget.item["Harga"] / 1000000).toString() +
+                              ".000.000",
+                        ),
+                      ],
+                    ),
+                    Divider(
+                      color: Colors.black45,
+                      height: 20,
+                      thickness: 1,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Text(
+                        "TERIMA KASIH",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Divider(
+                      color: Colors.black45,
+                      height: 20,
+                      thickness: 1,
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text("Batal")),
+                TextButton(
+                    onPressed: () {
+                      addOrder(widget.item["Judul"]);
+                      Navigator.pop(context);
+                    },
+                    child: Text("Konfirmasi")),
+              ],
+            );
+          });
+    }
+
     return SafeArea(
       child: Scaffold(
         body: Stack(alignment: AlignmentDirectional.topStart, children: [
@@ -150,13 +300,27 @@ class detailpaketstate extends State<detailpaket> {
                         Text(
                           "Rp. " +
                               (widget.item["Harga"] / 1000000).toString() +
-                              "00.000",
+                              ".000.000",
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
                     Spacer(),
+                    ElevatedButton(
+                      onPressed: () {
+                        orderNow();
+                      },
+                      style: ElevatedButton.styleFrom(
+                          fixedSize: Size(180, 42),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50))),
+                      child: Text(
+                        "Order Sekarang",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    SizedBox(width: 10),
                     ElevatedButton(
                       onPressed: () async {
                         FocusManager.instance.primaryFocus?.unfocus();
@@ -171,10 +335,13 @@ class detailpaketstate extends State<detailpaket> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                          fixedSize: Size(180, 42),
+                          fixedSize: Size(55, 55),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(50))),
-                      child: Text("Order Sekarang"),
+                      child: Icon(
+                        FontAwesome.whatsapp,
+                        color: Colors.white,
+                      ),
                     ),
                   ],
                 ),

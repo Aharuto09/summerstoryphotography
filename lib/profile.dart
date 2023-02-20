@@ -74,15 +74,18 @@ class profile extends StatelessWidget {
                             },
                             child: Stack(
                               children: [
-                                Container(
-                                  height: 150,
-                                  width: (lebar / 3) - 15,
-                                  decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: NetworkImage(i["profile"])),
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(5)),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(5),
+                                  child: Container(
+                                    height: 150,
+                                    width: (lebar / 3) - 15,
+                                    child: FadeInImage.assetNetwork(
+                                        placeholder:
+                                            "assets/image_placeholder.jpg",
+                                        image: i["profile"],
+                                        fit: BoxFit.cover,
+                                        width: 1000),
+                                  ),
                                 ),
                                 Positioned(
                                   bottom: 0.0,
@@ -164,15 +167,18 @@ class profile extends StatelessWidget {
                             },
                             child: Stack(
                               children: [
-                                Container(
-                                  height: 150,
-                                  width: (lebar / 3) - 15,
-                                  decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: NetworkImage(i["profile"])),
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(5)),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(5),
+                                  child: Container(
+                                    height: 150,
+                                    width: (lebar / 3) - 15,
+                                    child: FadeInImage.assetNetwork(
+                                        placeholder:
+                                            "assets/image_placeholder.jpg",
+                                        image: i["profile"],
+                                        fit: BoxFit.cover,
+                                        width: 1000),
+                                  ),
                                 ),
                                 Positioned(
                                   bottom: 0.0,

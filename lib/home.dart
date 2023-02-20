@@ -52,19 +52,39 @@ class home extends StatelessWidget {
                                       BorderRadius.all(Radius.circular(5.0)),
                                   child: Stack(
                                     children: <Widget>[
-                                      Image.network(item["img"],
-                                          fit: BoxFit.cover, width: 1000.0),
-                                      Center(
+                                      // Image.network(item["img"],
+                                      //     fit: BoxFit.cover, width: 1000.0),
+                                      FadeInImage.assetNetwork(
+                                          placeholder:
+                                              "assets/image_placeholder.jpg",
+                                          image: item["img"],
+                                          fit: BoxFit.cover,
+                                          width: 1000),
+
+                                      Positioned(
                                         child: Container(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 10.0, horizontal: 10.0),
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                Color.fromARGB(100, 0, 0, 0),
+                                                Color.fromARGB(0, 0, 0, 0)
+                                              ],
+                                              begin: Alignment.bottomCenter,
+                                              end: Alignment.topCenter,
+                                            ),
+                                          ),
+                                          // padding: EdgeInsets.symmetric(
+                                          //     vertical: 20.0, horizontal: 20.0),
                                           child: Center(
                                             child: Text(
                                               item["Judul"],
+                                              overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
-                                                color: Colors.orange,
+                                                color: Colors.white,
                                                 fontSize: 20.0,
-                                                fontWeight: FontWeight.bold,
+                                                fontWeight: FontWeight.w400,
                                               ),
                                             ),
                                           ),
@@ -128,13 +148,12 @@ class home extends StatelessWidget {
                                   height: (lebar / 3.2) - 20,
                                   width: (lebar / 2) - 20,
                                   child: Stack(children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                              fit: BoxFit.cover,
-                                              image:
-                                                  NetworkImage(item["image"]))),
-                                    ),
+                                    FadeInImage.assetNetwork(
+                                        placeholder:
+                                            "assets/image_placeholder.jpg",
+                                        image: item["image"],
+                                        fit: BoxFit.cover,
+                                        width: 1000),
                                     Positioned(
                                       bottom: 0.0,
                                       left: 0.0,
@@ -216,19 +235,31 @@ class home extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(5),
                                   child: Stack(
                                     children: [
-                                      Container(
-                                          decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                  fit: BoxFit.cover,
-                                                  image: NetworkImage(
-                                                      YoutubeThumbnail(
-                                                              youtubeId: (i[
-                                                                      "url"])
-                                                                  .toString()
-                                                                  .replaceAll(
-                                                                      "https://youtu.be/",
-                                                                      ""))
-                                                          .standard())))),
+                                      // Container(
+                                      //     decoration: BoxDecoration(
+                                      //         image: DecorationImage(
+                                      //             fit: BoxFit.cover,
+                                      //             image: NetworkImage(
+                                      //                 YoutubeThumbnail(
+                                      //                         youtubeId: (i[
+                                      //                                 "url"])
+                                      //                             .toString()
+                                      //                             .replaceAll(
+                                      //                                 "https://youtu.be/",
+                                      //                                 ""))
+                                      //                     .standard())))),
+                                      FadeInImage.assetNetwork(
+                                          placeholder:
+                                              "assets/image_placeholder.jpg",
+                                          image: YoutubeThumbnail(
+                                                  youtubeId: (i["url"])
+                                                      .toString()
+                                                      .replaceAll(
+                                                          "https://youtu.be/",
+                                                          ""))
+                                              .standard(),
+                                          fit: BoxFit.cover,
+                                          width: 1000),
                                       Positioned(
                                         bottom: 0.0,
                                         left: 0.0,

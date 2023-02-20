@@ -1,5 +1,7 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ta_summerstory/main.dart';
 
 class MyProfile extends StatefulWidget {
   MyProfile({Key? key}) : super(key: key);
@@ -7,6 +9,8 @@ class MyProfile extends StatefulWidget {
 }
 
 class _MyProfileState extends State<MyProfile> {
+  late DatabaseReference myProfileRef =
+      FirebaseDatabase.instance.ref().child("User").child(Userlogged);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +67,6 @@ class _MyProfileState extends State<MyProfile> {
                         decoration: InputDecoration(
                             icon: Icon(Icons.phone),
                             prefixStyle: TextStyle(color: Colors.black),
-                            prefix: Text("+62 "),
                             hintText: "No. Handphone"),
                       ),
                       Spacer(),

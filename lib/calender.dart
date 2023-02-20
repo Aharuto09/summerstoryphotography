@@ -60,6 +60,8 @@ class scheduleState extends State<schedulePage> {
             child: Column(
               children: [
                 CalendarAppBar(
+                  events: List.generate(jadwal.length,
+                      (index) => DateTime.parse(jadwal[index]["date"])),
                   backButton: false,
                   accent: Colors.orange,
                   onDateChanged: (value) => setState(() {
@@ -95,7 +97,9 @@ class scheduleState extends State<schedulePage> {
                             overflow: TextOverflow.ellipsis,
                           ),
                           subtitle: Text(lokasi.toString()),
-                          leading: CircleAvatar(), //awalan pada circle image
+                          leading: CircleAvatar(
+                              backgroundColor: Colors.orange,
+                              radius: 10), //awalan pada circle image
                           trailing: Text("$date"),
                         )
                       else

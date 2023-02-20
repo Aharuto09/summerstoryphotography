@@ -28,8 +28,8 @@ class paket extends StatelessWidget {
                 children: [
                   Wrap(
                       alignment: WrapAlignment.center,
-                      spacing: 10,
-                      runSpacing: 10,
+                      spacing: 20,
+                      runSpacing: 20,
                       children: [
                         for (var i in lists)
                           InkWell(
@@ -62,14 +62,12 @@ class paket extends StatelessWidget {
                                         children: [
                                           Expanded(
                                             child: Container(
-                                              decoration: BoxDecoration(
-                                                image: new DecorationImage(
+                                              child: FadeInImage.assetNetwork(
+                                                  placeholder:
+                                                      "assets/image_placeholder.jpg",
+                                                  image: i["image"],
                                                   fit: BoxFit.cover,
-                                                  image: new NetworkImage(
-                                                    i["image"],
-                                                  ),
-                                                ),
-                                              ),
+                                                  width: 1000),
                                             ),
                                           ),
                                           Container(

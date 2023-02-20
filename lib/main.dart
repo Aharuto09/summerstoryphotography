@@ -1,11 +1,16 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:ta_summerstory/homepage.dart';
+import 'package:ta_summerstory/homeadmin.dart';
 import 'package:ta_summerstory/loginPage.dart';
-import 'package:ta_summerstory/pageexplore.dart';
-import 'package:ta_summerstory/signup.dart';
-import 'package:ta_summerstory/videoexplore.dart';
-import 'package:ta_summerstory/videoyt.dart';
+import 'package:ta_summerstory/start.dart';
+
+String Userlogged = "";
+String PassLogged = "";
+int mainOrange = 0xfff16822;
+int subOrange = 0xffb14b26;
+int darkGrey = 0xff1a1a1a;
+int lightGrey = 0xffd6d5da;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +23,33 @@ void main() async {
           messagingSenderId: "603353560536",
           projectId: "summerstorydatabase",
           measurementId: "G-Q6FLR1PF8D"));
-  runApp(const MyApp());
+  Future<void> loggedin() async {
+    late DatabaseReference refUser =
+        FirebaseDatabase.instance.ref().child("User");
+    final userSnapshot = await refUser.child(Userlogged).get();
+    if (userSnapshot.exists &&
+        (userSnapshot.value as dynamic)["pass"] == PassLogged) {
+      if ((userSnapshot.value as dynamic)["status"]) {
+        runApp(MyLoggedApp(
+          userSnapshot: userSnapshot,
+          statusAdmin: (userSnapshot.value as dynamic)["status"],
+        ));
+      } else {
+        runApp(MyLoggedApp(
+          userSnapshot: userSnapshot,
+          statusAdmin: (userSnapshot.value as dynamic)["status"],
+        ));
+      }
+    } else {
+      runApp(MyApp());
+    }
+  }
+
+  if (Userlogged != "") {
+    loggedin();
+  } else {
+    runApp(MyApp());
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -33,55 +64,32 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.orange,
         ),
-        home: LoginPage()
-        //  MyHomePage(),
-        );
+        home: LoginPage());
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+class MyLoggedApp extends StatefulWidget {
+  MyLoggedApp({Key? key, required this.userSnapshot, required this.statusAdmin})
+      : super(key: key);
+  DataSnapshot userSnapshot;
+  bool statusAdmin;
+
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MyLoggedApp> createState() => myLoggedState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class myLoggedState extends State<MyLoggedApp> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(height: 60),
-          Image.asset("assets/SummerStory 4.png"),
-          SizedBox(height: 100),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => LoginPage()));
-            },
-            style: ElevatedButton.styleFrom(
-                fixedSize: Size(257, 42),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50))),
-            child: Text("LOGIN"),
-          ),
-          SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => SignupPage()));
-            },
-            style: ElevatedButton.styleFrom(
-                fixedSize: Size(257, 42),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50))),
-            child: Text("SIGN UP"),
-          ),
-          Spacer()
-        ],
+    return MaterialApp(
+      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.orange,
       ),
-    ));
+      home: widget.statusAdmin
+          ? adminHomepage(userSnapshot: widget.userSnapshot)
+          : startPage(userSnapshot: widget.userSnapshot),
+    );
   }
 }

@@ -30,17 +30,6 @@ class Explore extends StatelessWidget {
               ],
             ),
           ),
-          // Container(
-          //     margin: EdgeInsets.all(12),
-          //     height: 50,
-          //     width: 50,
-          //     decoration: BoxDecoration(
-          //         color: Colors.white,
-          //         borderRadius: BorderRadius.circular(50),
-          //         boxShadow: [
-          //           BoxShadow(blurRadius: 12, color: Colors.black26)
-          //         ])),
-
           ElevatedButton(
             onPressed: () {
               Navigator.push(context,
@@ -118,16 +107,18 @@ class Explore extends StatelessWidget {
                                           child: ClipRRect(
                                             borderRadius:
                                                 BorderRadius.circular(5),
-                                            child: Image.network(
-                                              YoutubeThumbnail(
-                                                      youtubeId: (i["url"])
-                                                          .toString()
-                                                          .replaceAll(
-                                                              "https://youtu.be/",
-                                                              ""))
-                                                  .standard(),
-                                              fit: BoxFit.cover,
-                                            ),
+                                            child: FadeInImage.assetNetwork(
+                                                placeholder:
+                                                    "assets/image_placeholder.jpg",
+                                                image: YoutubeThumbnail(
+                                                        youtubeId: (i["url"])
+                                                            .toString()
+                                                            .replaceAll(
+                                                                "https://youtu.be/",
+                                                                ""))
+                                                    .standard(),
+                                                fit: BoxFit.cover,
+                                                width: 1000),
                                           ),
                                         ),
                                       )

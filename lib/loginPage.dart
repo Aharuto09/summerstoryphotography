@@ -1,6 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:ta_summerstory/homeadmin.dart';
+import 'package:ta_summerstory/main.dart';
 import 'package:ta_summerstory/signup.dart';
 
 import 'homepage.dart';
@@ -70,12 +72,25 @@ class _LoginPageState extends State<LoginPage> {
       late DatabaseReference refUser =
           FirebaseDatabase.instance.ref().child("User");
       final passU = await refUser.child(username).get();
-      if (passU.exists) {
+      if (passU.exists && (passU.value as dynamic)["status"] == false) {
         if (((passU.value as dynamic)["pass"]).toString() == pass) {
+          Userlogged = username;
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => homePage(
+                        userSnapshot: passU,
+                      )));
+        } else {
+          dialogalert(context, "Username or Password Not Valid");
+        }
+      } else if ((passU.value as dynamic)["status"] == true) {
+        if (((passU.value as dynamic)["pass"]).toString() == pass) {
+          Userlogged = "admin";
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => adminHomepage(
                         userSnapshot: passU,
                       )));
         } else {
@@ -138,6 +153,8 @@ class _LoginPageState extends State<LoginPage> {
                   } else {
                     dialogalert(context, "Username or Password is Empty");
                   }
+                  username.clear();
+                  password.clear();
                 },
                 style: ElevatedButton.styleFrom(
                     fixedSize: Size(257, 42),
@@ -145,6 +162,7 @@ class _LoginPageState extends State<LoginPage> {
                         borderRadius: BorderRadius.circular(50))),
                 child: Text("LOGIN"),
               ),
+              SizedBox(height: 10),
               TextButton(
                   onPressed: () {
                     Navigator.push(context,
